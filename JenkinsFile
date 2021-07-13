@@ -5,6 +5,7 @@ node {
     def BUILD_NUMBER=env.BUILD_NUMBER
     def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
     def SFDC_USERNAME
+    def NOME_BRANCH = env.GIT_BRANCH	
 
     def HUB_ORG=env.HUB_ORG_DH
     def SFDC_HOST = env.SFDC_HOST_DH
@@ -38,7 +39,7 @@ node {
 	    if (rc == 0){   
 	 stage('Implantando pacote') { 
 		 println('Nome da Branch')
-		 println(env.BRANCH_NAME)
+		 println(NOME_BRANCH)
 		// need to pull out assigned username
 		if (isUnix()) {
 			rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
