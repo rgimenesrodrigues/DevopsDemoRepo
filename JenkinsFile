@@ -18,7 +18,7 @@ node {
     println CONNECTED_APP_CONSUMER_KEY
     def toolbelt = tool 'toolbelt'
 
-    stage('checkout source') {
+    stage('Checkout-out código fonte') {
         // when running in multi-branch job, one must issue this command
         checkout scm
     }
@@ -31,18 +31,15 @@ node {
                  rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --instanceurl ${SFDC_HOST}"
             }
             if (rc != 0) { error 'hub org authorization failed' }
+	     println rc
 	}
-	stage('Fazendo Deploy') {
-            
-			println rc
-			
-			// need to pull out assigned username
-			if (isUnix()) {
-				rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
-			}else{
-				//fdx force:source:deploy -u myuser@example.com  -x manifest/package.xml -w 10
-			   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml -u ${HUB_ORG} -w 10"
-			}
+	stage('Fazendo Deploy'){
+            if (isUnix()) {
+			rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
+		}else{
+			//fdx force:source:deploy -u myuser@example.com  -x manifest/package.xml -w 10
+			rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml -u ${HUB_ORG} -w 10"
+		}
 			  
             printf rmsg
             println('Hello from a Job DSL script!')
