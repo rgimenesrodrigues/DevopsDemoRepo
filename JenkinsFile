@@ -33,8 +33,9 @@ node {
             }
             if (rc != 0) { error 'hub org authorization failed' }
 
-			println rc
+		println rc
 	}
+	    if (rc == 0){   
 	 stage('Deployando codigo') {   
 			// need to pull out assigned username
 			if (isUnix()) {
@@ -47,5 +48,6 @@ node {
             println('Hello from a Job DSL script!')
             println(rmsg)
         }
+	    }
     }
 }
