@@ -37,7 +37,8 @@ node {
 	}
 	    if (rc == 0){   
 	 stage('Implantando pacote') { 
-		 printf env.BRANCH_NAME
+		 println('Nome da Branch')
+		 println(env.BRANCH_NAME)
 		// need to pull out assigned username
 		if (isUnix()) {
 			rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
