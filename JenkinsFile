@@ -18,19 +18,25 @@ node {
     println CONNECTED_APP_CONSUMER_KEY
     def toolbelt = tool 'toolbelt'
 
-    String cronString = "0 13 40 * 1-5" 
-
-    
-    triggers {
-        cron(cronString)
-    }
-
-
+   
     stage('checkout source') {
         // when running in multi-branch job, one must issue this command
         checkout scm
     }
 
+    withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
+        stage('Validar pacote') {
+
+
+
+        }
+        stage('Implantar pacote') {
+
+
+
+        }
+    }
+    /*
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
         stage('Deploye Code') {
             if (isUnix()) {
@@ -55,5 +61,27 @@ node {
             println(rmsg)
         }
     }
+    */
+
+    def salesforceDeploy() {
+        //if (isUnix()) {
+		//		rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
+		//	}else{
+				//fdx force:source:deploy -u myuser@example.com  -x manifest/package.xml -w 10
+	//		   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml -u ${HUB_ORG} -w 10"
+	//		}
+    println('Veio no Deploy')
+
+    }
+    def salesforceValidate() {
+      //  if (isUnix()) {
+	//			rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
+//			}else{
+				//fdx force:source:deploy -u myuser@example.com  -x manifest/package.xml -w 10
+//			   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml -u ${HUB_ORG} -w 10"
+//			}
+        println('Veio no Validate')
+    }
+    
     
 }
