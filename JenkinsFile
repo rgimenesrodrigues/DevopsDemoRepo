@@ -5,6 +5,7 @@ node {
     def BUILD_NUMBER=env.BUILD_NUMBER
     def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
     def SFDC_USERNAME
+    def NOME_BRANCH = env.BRANCH_NAME	
 
     def HUB_ORG=env.HUB_ORG_DH
     def SFDC_HOST = env.SFDC_HOST_DH
@@ -18,49 +19,38 @@ node {
     println CONNECTED_APP_CONSUMER_KEY
     def toolbelt = tool 'toolbelt'
 
-   
-    stage('checkout source') {
+    stage('Checkout codigo fonte') {
         // when running in multi-branch job, one must issue this command
         checkout scm
     }
 
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
-
-        stage('Autorizando') {
+        stage('Autorizar ORG') {
             if (isUnix()) {
                 rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
             }else{
+		 ru = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:logout --targetusername ${HUB_ORG} -p" 
                  rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --instanceurl ${SFDC_HOST}"
             }
             if (rc != 0) { error 'hub org authorization failed' }
 
-			println rc
-           
-        }  
-         stage('Validar pacote') {
-            }
-        stage('Implantar pacote') {
-            }  
-    
-        def salesforceDeploy() {
-            //if (isUnix()) {
-            //		rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
-            //	}else{
-                    //fdx force:source:deploy -u myuser@example.com  -x manifest/package.xml -w 10
-        //		   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml -u ${HUB_ORG} -w 10"
-        //		}
-            println('Veio no Deploy')
-
-        }
-        def salesforceValidate() {
-        //  if (isUnix()) {
-        //			rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
-    //			}else{
-                    //fdx force:source:deploy -u myuser@example.com  -x manifest/package.xml -w 10
-    //			   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml -u ${HUB_ORG} -w 10"
-    //			}
-            println('Veio no Validate')
-        }
+		println rc
+	}
+	    if (rc == 0){   
+	 stage('Implantando pacote') { 
+		 println('Nome da Branch')
+		 println(NOME_BRANCH)
+		// need to pull out assigned username
+		if (isUnix()) {
+			rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
+		}else{
+			rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml -u ${HUB_ORG} -w 10"
+		}
+			  
+            printf rmsg
+            println('Hello from a Job DSL script!')
+            println(rmsg)
+        	}
+	 }
     }
-    
 }
