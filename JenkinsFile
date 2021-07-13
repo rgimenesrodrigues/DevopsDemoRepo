@@ -41,7 +41,9 @@ node {
 		}
         }  
         
-        def salesforceDeploy() {
+        
+    }
+	def salesforceDeploy() {
             //if (isUnix()) {
             //		rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
             //	}else{
@@ -60,6 +62,5 @@ node {
     //			}
             println('Veio no Validate')
         }
-    }
    
 }
