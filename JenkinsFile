@@ -37,10 +37,12 @@ node {
 			println rc
            
         }  
-         stage('Validar pacote') {
-            }
+        stage('Validar pacote') {
+		salesforceValidate()
+        }
         stage('Implantar pacote') {
-            }  
+		salesforceDeploy()
+        }  
     
         def salesforceDeploy() {
             //if (isUnix()) {
